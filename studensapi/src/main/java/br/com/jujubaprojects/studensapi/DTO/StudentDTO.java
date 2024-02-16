@@ -1,5 +1,7 @@
 package br.com.jujubaprojects.studensapi.DTO;
 
+import java.util.Optional;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -21,11 +23,6 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
     private StudentStatus status;
     private double note1 , note2;
     private double average;
-
-    
-    public StudentDTO() {
-    }
-
 
 
     public StudentDTO(int key, String firstname, StudentStatus status, double note1, double note2, double average) {

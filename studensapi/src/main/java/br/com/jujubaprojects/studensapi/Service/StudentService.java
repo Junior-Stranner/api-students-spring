@@ -56,6 +56,18 @@ public class StudentService {
      }
    }
 
+   public StudentDTO findByIdStudent(int id){
+
+    if (this.studentRepository.countByKey(id) != 0){
+          
+        Student student = this.studentRepository.findById(id).get();
+        return new StudentDTO(student);
+    }else{ 
+
+    throw new NullPointerException() ;
+    }
+   }
+
    public StudentDTO udateStudent(StudentDTO studentDTO){
 
     Optional<Student> optionalStudent = this.studentRepository.findById(studentDTO.getKey());
@@ -67,8 +79,8 @@ public class StudentService {
         existingStudent.setNote1(studentDTO.getNote1());
         existingStudent.setNote2(studentDTO.getNote2());
 
-     Student updatedStudent = this.studentRepository.save(existingStudent);
-        return new StudentDTO(updatedStudent);
+     Student student = this.studentRepository.save(existingStudent);
+        return new StudentDTO(student);
     } else{
         throw new EntityNotFoundException("student not found !");
     }
