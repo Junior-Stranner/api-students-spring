@@ -5,8 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 
 import br.com.jujubaprojects.studensapi.DTO.StudentDTO;
@@ -27,7 +26,7 @@ public class StudentService {
     //  List<StudentDTO> studentDTOs = DozerMapper.parseObject(entities, StudentDTO.class);
       return studentRepository.findAll().stream().map(StudentDTO::new).collect(Collectors.toList());
       //return entities.stream().map(x -> new StudentDTO(x)).toList;
-}
+ }
     
 
    public Student create(Student student) {
@@ -74,6 +73,12 @@ public class StudentService {
         throw new EntityNotFoundException("student not found !");
     }
    
+   }
+
+
+   public void deleteStudent(int id){
+    Student deleteStudent = this.studentRepository.findById(id).get();
+    this.studentRepository.delete(deleteStudent);
    }
 
 }
