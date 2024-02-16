@@ -36,7 +36,6 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
         this.note2 = note2;
     }
 
-
     public StudentDTO(Student student) {
         BeanUtils.copyProperties(student, this);
 
