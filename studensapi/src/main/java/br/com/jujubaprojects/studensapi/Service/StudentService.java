@@ -20,9 +20,8 @@ public class StudentService {
     @Autowired 
     StudentRepository studentRepository;
 
-
-  public List<StudentDTO> allStudents() {
-      List<Student> entities = this.studentRepository.findAll();
+    public List<StudentDTO> allStudents() {
+       this.studentRepository.findAll();
     //  List<StudentDTO> studentDTOs = DozerMapper.parseObject(entities, StudentDTO.class);
       return studentRepository.findAll().stream().map(StudentDTO::new).collect(Collectors.toList());
       //return entities.stream().map(x -> new StudentDTO(x)).toList;
@@ -30,7 +29,7 @@ public class StudentService {
     
 
    public Student create(Student student) {
-     List<Student> students = this.studentRepository.findAll();
+  //   List<Student> students = this.studentRepository.findAll();
     /*  boolean existingStudent = students.stream().anyMatch(existingStudent -> existingStudent.getRegistration().equals(student.getRegistration()));
 
     if(existingStudent) {
@@ -41,14 +40,20 @@ public class StudentService {
       if (studentRepository.existsByRegistration(student.getRegistration())) {
         throw new RuntimeException("Já existe um aluno cadastrado com a mesma matrícula.");
     }else{
-    // Salvar o aluno se a matrícula for única
-    return  studentRepository.save(student);
+
+        //calcula a média do aluno através das duas notas no banco de dados
+        double avargeNote = this.studentRepository.findAverageNote();
+
+      // Salvar o aluno se a matrícula for única
+      Student savedStudent = this.studentRepository.save(student);
+
+    return  savedStudent;
     }
    }
 
-   public int quantityRegsitration(int key){
-    if(this.studentRepository.countByKey(key) != 0)
-    return  this.studentRepository.countByKey(key);
+   public int quantityRegsitration(Long id){
+    if(this.studentRepository.countById(id) != 0)
+    return  this.studentRepository.countById(id);
 
      else{
         throw new NullPointerException("no records registered !");
@@ -56,9 +61,9 @@ public class StudentService {
      }
    }
 
-   public StudentDTO findByIdStudent(int id){
+   public StudentDTO findByIdStudent(Long id){
 
-    if (this.studentRepository.countByKey(id) != 0){
+    if (this.studentRepository.countById(id) != 0){
           
         Student student = this.studentRepository.findById(id).get();
         return new StudentDTO(student);
@@ -68,7 +73,7 @@ public class StudentService {
     }
    }
 
-   public StudentDTO udateStudent(StudentDTO studentDTO){
+   public StudentDTO upateStudent(StudentDTO studentDTO){
 
     Optional<Student> optionalStudent = this.studentRepository.findById(studentDTO.getKey());
 
@@ -86,9 +91,7 @@ public class StudentService {
     }
    
    }
-
-
-   public void deleteStudent(int id){
+   public void deleteStudent( Long id){
     Student deleteStudent = this.studentRepository.findById(id).get();
     this.studentRepository.delete(deleteStudent);
    }

@@ -1,9 +1,9 @@
 package br.com.jujubaprojects.studensapi.DTO;
 
-import java.util.Optional;
+
+import java.io.Serializable;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -14,18 +14,20 @@ import br.com.jujubaprojects.studensapi.enums.StudentStatus;
 
 
 @JsonPropertyOrder({"id", "firstName", "status", "note1","note2", "average"})
-public class StudentDTO extends RepresentationModel<StudentDTO>{
+public class StudentDTO implements Serializable{
+
+    private static final long SerializableUID = 1L;
     
     @JsonProperty("id")
     @Mapping("id") // Mapping apensa funciona com DozerMApper
-    private int Key;
+    private Long Key;
     private String firstname;
     private StudentStatus status;
     private double note1 , note2;
     private double average;
 
 
-    public StudentDTO(int key, String firstname, StudentStatus status, double note1, double note2, double average) {
+    public StudentDTO(Long key, String firstname, StudentStatus status, double note1, double note2, double average) {
         Key = key;
         this.firstname = firstname;
         this.status = status;
@@ -39,10 +41,10 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
     }
 
 
-    public int getKey() {
+    public Long getKey() {
         return Key;
     }
-    public void setKey(int key) {
+    public void setKey(Long key) {
         Key = key;
     }
     public String getFirstname() {
@@ -76,28 +78,32 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
         this.average = average;
     }
 
-
-
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + Key;
+        int result = super.hashCode();
+        result = prime * result + ((Key == null) ? 0 : Key.hashCode());
         return result;
     }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
+        if (!super.equals(obj))
             return false;
         if (getClass() != obj.getClass())
             return false;
         StudentDTO other = (StudentDTO) obj;
-        if (Key != other.Key)
+        if (Key == null) {
+            if (other.Key != null)
+                return false;
+        } else if (!Key.equals(other.Key))
             return false;
         return true;
     }
+
+
 
 
     

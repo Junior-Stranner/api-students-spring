@@ -1,5 +1,6 @@
 package br.com.jujubaprojects.studensapi.Model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,15 +17,16 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 
 @Entity
 @Table(name = "tb_student")
-public class Student {
+public class Student implements Serializable{
+
+    private static final long SerializableUID = 1L;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
     
     @NotBlank(message = "Enter the student's first name")
     private String firstname;
@@ -61,12 +63,12 @@ public class Student {
 
     
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public Long setId(Long id) {
+        return this.id = id;
     }
 
     public String getFirstname() {
