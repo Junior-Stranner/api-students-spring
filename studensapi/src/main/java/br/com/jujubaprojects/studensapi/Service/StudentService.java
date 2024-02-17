@@ -1,5 +1,6 @@
 package br.com.jujubaprojects.studensapi.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,11 +22,26 @@ public class StudentService {
     StudentRepository studentRepository;
 
     public List<StudentDTO> allStudents() {
-       this.studentRepository.findAll();
-    //  List<StudentDTO> studentDTOs = DozerMapper.parseObject(entities, StudentDTO.class);
-      return studentRepository.findAll().stream().map(StudentDTO::new).collect(Collectors.toList());
-      //return entities.stream().map(x -> new StudentDTO(x)).toList;
- }
+        // Obter todos os estudantes do repositório
+        List<Student> students = this.studentRepository.findAll();
+        
+        // Calcular a média das notas de todos os estudantes
+        double average = students.stream()
+                                .mapToDouble(student -> (student.getNote1() + student.getNote2()) / 2)
+                                .average() // irá receber o caluclo 
+                                .orElse(0.0); // Valor padrão se não houver estudantes
+    
+        // Mapear os estudantes para DTOs e adicionar a média a cada DTO
+        List<StudentDTO> studentDTOs = students.stream()
+                                               .map(student -> {
+                                                   StudentDTO dto = new StudentDTO(student);
+                                                   dto.setAverage(average);
+                                                   return dto;
+                                               })
+                                               .collect(Collectors.toList());
+    
+        return studentDTOs;
+    }
     
 
    public ResponseEntity<Student> create(Student student) {
@@ -40,15 +56,25 @@ public class StudentService {
       if (studentRepository.existsByRegistration(student.getRegistration())) {
         return ResponseEntity.badRequest().build();
     }else{
-
-      //calcula a média do aluno através das duas notas no banco de dados
-      double average = this.studentRepository.findAverageNote();
-
+           student.setBirthDay(LocalDate.of(2000, 1, 1)); // Exemplo de data de nascimento
+           System.out.println(student.getBirthDay()); // Isso imprimirá "null"
+           
       // Salvar o aluno se a matrícula for única
       Student savedStudent = this.studentRepository.save(student);
-      
+
+     //calcula a média e joga para a varriável avarge
+     double average = this.studentRepository.findAverageNote();
+
      //adiciono a média para o aluno salvo 
      savedStudent.setAverage(average);
+
+     if(student.getAverage() > 6){
+        student.setStatus(student.getStatus().APPROVED);
+     }else if(student.getAverage() < 6 && student.getAverage() > 4){
+        student.setStatus(student.getStatus().RECOVERY);
+     }else{
+        student.setStatus(student.getStatus().DISAPPROVED);
+     }
 
      //retorno o aluno salvo com a média
     return  ResponseEntity.ok(savedStudent);
@@ -65,17 +91,23 @@ public class StudentService {
      }
    }
 
-   public StudentDTO findByIdStudent(Long id){
+   public Student findByIdStudent(Long id) {
+    Optional<Student> optionalStudent = this.studentRepository.findById(id);
 
-    if (this.studentRepository.countById(id) != 0){
-          
-        Student student = this.studentRepository.findById(id).get();
-        return new StudentDTO(student);
-    }else{ 
-
-    throw new NullPointerException() ;
+    if (optionalStudent.isPresent()) {
+        Student student = optionalStudent.get();
+        
+        // Obter a média das notas do aluno
+        double average = this.studentRepository.findAverageNote();
+        
+        // Criar uma entity para o aluno com a média das notas atribuída
+        student.setAverage(average);
+        return student;
+    } else {
+        throw new EntityNotFoundException("Student not found with id: " + id);
     }
-   }
+}
+
 
    public StudentDTO upateStudent(StudentDTO studentDTO){
 
@@ -88,6 +120,7 @@ public class StudentService {
         existingStudent.setNote1(studentDTO.getNote1());
         existingStudent.setNote2(studentDTO.getNote2());
         existingStudent.setAverage(studentDTO.getAverage());
+        existingStudent.setStatus(studentDTO.getStatus());
 
      Student student = this.studentRepository.save(existingStudent);
         return new StudentDTO(student);
