@@ -7,9 +7,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import br.com.jujubaprojects.studensapi.enums.StudentStatus;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,9 +23,10 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "tb_student")
-public class Student implements Serializable{
+@JsonPropertyOrder({"id", "firstName", "lastname", "registration", "year", "gender", "birthday", "note1", "note2", "average", "status"})
+public class Student {
 
-    private static final long SerializableUID = 1L;
+   // private static final long SerializableUID = 1L;
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,10 +39,7 @@ public class Student implements Serializable{
     private String lastname;
 
     @NotBlank(message = "Enter the student's registration")
-    private int registration;
-
-    @NotBlank(message = "Enter the year the student is in")
-    private int year;
+    private String registration;
 
     @NotBlank(message = "Enter the gender the students gender")
     private String gender;
@@ -47,21 +48,16 @@ public class Student implements Serializable{
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate birthDay;
 
-    @NotBlank
+    @Enumerated(EnumType.STRING)
     private StudentStatus status;
 
     @Min(0)
     @Max(10)
     private double note1 , note2;
 
-    @JsonIgnore
     private double average;
 
-    public Student(){
-        
-    }
-
-    
+    public Student(){}
 
     public Long getId() {
         return id;
@@ -87,20 +83,12 @@ public class Student implements Serializable{
         this.lastname = lastname;
     }
 
-    public int getRegistration() {
+    public String getRegistration() {
         return registration;
     }
 
-    public void setRegistration(int registration) {
+    public void setRegistration(String registration) {
         this.registration = registration;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
     }
 
     public String getGender() {
@@ -141,6 +129,21 @@ public class Student implements Serializable{
 
     public void setNote2(double note2) {
         this.note2 = note2;
+    }
+
+    public double getAverage() {
+        return average;
+    }
+
+    public void setAverage(double average) {
+        this.average = average;
+    }
+
+    @Override
+    public String toString() {
+        return "Student [id=" + id + ", firstname=" + firstname + ", lastname=" + lastname + ", registration="
+                + registration + ", gender=" + gender + ", birthDay=" + birthDay + ", status="
+                + status + ", note1=" + note1 + ", note2=" + note2 + ", average=" + average + "]";
     }
 
     

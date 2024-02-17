@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.com.jujubaprojects.studensapi.DTO.StudentDTO;
@@ -28,7 +28,7 @@ public class StudentService {
  }
     
 
-   public Student create(Student student) {
+   public ResponseEntity<Student> create(Student student) {
   //   List<Student> students = this.studentRepository.findAll();
     /*  boolean existingStudent = students.stream().anyMatch(existingStudent -> existingStudent.getRegistration().equals(student.getRegistration()));
 
@@ -38,16 +38,20 @@ public class StudentService {
         return this.studentRepository.save(student);
       }*/
       if (studentRepository.existsByRegistration(student.getRegistration())) {
-        throw new RuntimeException("Já existe um aluno cadastrado com a mesma matrícula.");
+        return ResponseEntity.badRequest().build();
     }else{
 
-        //calcula a média do aluno através das duas notas no banco de dados
-        double avargeNote = this.studentRepository.findAverageNote();
+      //calcula a média do aluno através das duas notas no banco de dados
+      double average = this.studentRepository.findAverageNote();
 
       // Salvar o aluno se a matrícula for única
       Student savedStudent = this.studentRepository.save(student);
+      
+     //adiciono a média para o aluno salvo 
+     savedStudent.setAverage(average);
 
-    return  savedStudent;
+     //retorno o aluno salvo com a média
+    return  ResponseEntity.ok(savedStudent);
     }
    }
 
@@ -75,7 +79,7 @@ public class StudentService {
 
    public StudentDTO upateStudent(StudentDTO studentDTO){
 
-    Optional<Student> optionalStudent = this.studentRepository.findById(studentDTO.getKey());
+    Optional<Student> optionalStudent = this.studentRepository.findById(studentDTO.getId());
 
       if(optionalStudent.isPresent()){
         Student existingStudent = optionalStudent.get();
@@ -83,6 +87,7 @@ public class StudentService {
         existingStudent.setFirstname(studentDTO.getFirstname());
         existingStudent.setNote1(studentDTO.getNote1());
         existingStudent.setNote2(studentDTO.getNote2());
+        existingStudent.setAverage(studentDTO.getAverage());
 
      Student student = this.studentRepository.save(existingStudent);
         return new StudentDTO(student);
@@ -91,7 +96,7 @@ public class StudentService {
     }
    
    }
-   public void deleteStudent( Long id){
+   public void deleteStudent(Long id){
     Student deleteStudent = this.studentRepository.findById(id).get();
     this.studentRepository.delete(deleteStudent);
    }

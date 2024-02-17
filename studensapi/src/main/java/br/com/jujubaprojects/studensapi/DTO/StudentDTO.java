@@ -1,34 +1,30 @@
 package br.com.jujubaprojects.studensapi.DTO;
-
-
-import java.io.Serializable;
-
 import org.springframework.beans.BeanUtils;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.github.dozermapper.core.Mapping;
-
 import br.com.jujubaprojects.studensapi.Model.Student;
 import br.com.jujubaprojects.studensapi.enums.StudentStatus;
 
 
 @JsonPropertyOrder({"id", "firstName", "status", "note1","note2", "average"})
-public class StudentDTO implements Serializable{
+public class StudentDTO  {
 
-    private static final long SerializableUID = 1L;
+  //  private static final long SerializableUID = 1L;
     
-    @JsonProperty("id")
-    @Mapping("id") // Mapping apensa funciona com DozerMApper
-    private Long Key;
+ //  @JsonProperty("id")
+ //  @Mapping("id") // Mapping apensa funciona com DozerMApper
+    private Long id;
     private String firstname;
     private StudentStatus status;
     private double note1 , note2;
     private double average;
 
+    public StudentDTO(){
+        
+    }
 
-    public StudentDTO(Long key, String firstname, StudentStatus status, double note1, double note2, double average) {
-        Key = key;
+    public StudentDTO(Long id, String firstname, StudentStatus status, double note1, double note2, double average) {
+        this.id = id;
         this.firstname = firstname;
         this.status = status;
         this.note1 = note1;
@@ -41,11 +37,11 @@ public class StudentDTO implements Serializable{
     }
 
 
-    public Long getKey() {
-        return Key;
+    public Long getId() {
+        return id;
     }
-    public void setKey(Long key) {
-        Key = key;
+    public void setId(Long id) {
+        this.id = id;
     }
     public String getFirstname() {
         return firstname;
@@ -82,7 +78,7 @@ public class StudentDTO implements Serializable{
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((Key == null) ? 0 : Key.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         return result;
     }
 
@@ -95,16 +91,12 @@ public class StudentDTO implements Serializable{
         if (getClass() != obj.getClass())
             return false;
         StudentDTO other = (StudentDTO) obj;
-        if (Key == null) {
-            if (other.Key != null)
+        if (id == null) {
+            if (other.id != null)
                 return false;
-        } else if (!Key.equals(other.Key))
+        } else if (!id.equals(other.id))
             return false;
         return true;
     }
-
-
-
-
     
 }

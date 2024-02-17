@@ -3,6 +3,7 @@ package br.com.jujubaprojects.studensapi.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +31,7 @@ public class StudentController {
     }
 
     @PostMapping
-    public Student create(@RequestBody @Valid Student student){
+    public ResponseEntity<Student> create(@RequestBody @Valid Student student){
         return this.studentService.create(student);
 
     }
@@ -52,7 +53,7 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable("id") Long id){
+    public void deleteStudent(@PathVariable("id") long id){
         this.studentService.deleteStudent(id);
     }
 

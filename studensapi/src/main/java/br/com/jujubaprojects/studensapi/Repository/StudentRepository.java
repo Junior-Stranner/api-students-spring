@@ -11,10 +11,10 @@ public interface StudentRepository extends JpaRepository<Student , Integer>{
 
     int countById(Long id);
 
-    boolean existsByRegistration(int registration);
+    boolean existsByRegistration(String registration);
 
-    @Query("SELECT AVG(s.note1 + s.note2) FROM Student s")
-    Double findAverageNote();
+    @Query("SELECT AVG(s.note1 + s.note2)/2 FROM Student s")
+    double findAverageNote();
 
     Optional<Student> findById(Long id);
 
