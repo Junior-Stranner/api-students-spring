@@ -9,10 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import br.com.jujubaprojects.studensapi.Controller.StudentController;
 import br.com.jujubaprojects.studensapi.DTO.StudentDTO;
 import br.com.jujubaprojects.studensapi.Model.Student;
 import br.com.jujubaprojects.studensapi.Repository.StudentRepository;
 //import br.com.jujubaprojects.studensapi.mapper.DozerMapper;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -26,20 +31,23 @@ public class StudentService {
         List<Student> students = this.studentRepository.findAll();
         
         // Calcular a média das notas de todos os estudantes
-        double average = students.stream()
-                                .mapToDouble(student -> (student.getNote1() + student.getNote2()) / 2)
-                                .average() // irá receber o caluclo 
-                                .orElse(0.0); // Valor padrão se não houver estudantes
-    
+        for (Student student : students) {
+            double average = (student.getNote1() + student.getNote2()) / 2;
+            student.setAverage(average);
+            student.setStatus(student.resultStudent());
+        }
         // Mapear os estudantes para DTOs e adicionar a média a cada DTO
         List<StudentDTO> studentDTOs = students.stream()
                                                .map(student -> {
                                                    StudentDTO dto = new StudentDTO(student);
-                                                   dto.setAverage(average);
+                                                   dto.setAverage(student.getAverage());
                                                    return dto;
                                                })
                                                .collect(Collectors.toList());
-    
+                                          
+		// Adiciona links de auto-relacionamento usando HATEOAS
+		studentDTOs.forEach(s -> s.add(linkTo(methodOn(StudentController.class).findById(s.getId())).withSelfRel()));
+	
         return studentDTOs;
     }
     
@@ -58,7 +66,7 @@ public class StudentService {
     }else{
            student.setBirthDay(LocalDate.of(2000, 1, 1)); // Exemplo de data de nascimento
            System.out.println(student.getBirthDay()); // Isso imprimirá "null"
-           
+
       // Salvar o aluno se a matrícula for única
       Student savedStudent = this.studentRepository.save(student);
 
@@ -67,14 +75,10 @@ public class StudentService {
 
      //adiciono a média para o aluno salvo 
      savedStudent.setAverage(average);
+     savedStudent.setStatus(savedStudent.resultStudent());
 
-     if(student.getAverage() > 6){
-        student.setStatus(student.getStatus().APPROVED);
-     }else if(student.getAverage() < 6 && student.getAverage() > 4){
-        student.setStatus(student.getStatus().RECOVERY);
-     }else{
-        student.setStatus(student.getStatus().DISAPPROVED);
-     }
+     student.add(linkTo(methodOn(StudentController.class).findById(student.getId())).withSelfRel());
+
 
      //retorno o aluno salvo com a média
     return  ResponseEntity.ok(savedStudent);
@@ -84,7 +88,6 @@ public class StudentService {
    public int quantityRegsitration(Long id){
     if(this.studentRepository.countById(id) != 0)
     return  this.studentRepository.countById(id);
-
      else{
         throw new NullPointerException("no records registered !");
 
@@ -102,6 +105,9 @@ public class StudentService {
         
         // Criar uma entity para o aluno com a média das notas atribuída
         student.setAverage(average);
+
+        student.add(linkTo(methodOn(StudentController.class).findById(id)).withSelfRel());
+
         return student;
     } else {
         throw new EntityNotFoundException("Student not found with id: " + id);
@@ -123,6 +129,9 @@ public class StudentService {
         existingStudent.setStatus(studentDTO.getStatus());
 
      Student student = this.studentRepository.save(existingStudent);
+
+     student.add(linkTo(methodOn(StudentController.class).findById(student.getId())).withSelfRel());
+
         return new StudentDTO(student);
     } else{
         throw new EntityNotFoundException("student not found !");

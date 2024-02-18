@@ -1,5 +1,6 @@
 package br.com.jujubaprojects.studensapi.DTO;
 import org.springframework.beans.BeanUtils;
+import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import br.com.jujubaprojects.studensapi.Model.Student;
@@ -7,7 +8,7 @@ import br.com.jujubaprojects.studensapi.enums.StudentStatus;
 
 
 @JsonPropertyOrder({"id", "firstName", "status", "note1","note2", "average"})
-public class StudentDTO  {
+public class StudentDTO extends RepresentationModel<StudentDTO>{
 
   //  private static final long SerializableUID = 1L;
     

@@ -3,6 +3,8 @@ package br.com.jujubaprojects.studensapi.Model;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -22,7 +24,7 @@ import jakarta.validation.constraints.NotBlank;
 @Entity
 @Table(name = "tb_student")
 @JsonPropertyOrder({"id", "firstName", "lastname", "registration", "year", "gender", "birthday", "note1", "note2", "average", "status"})
-public class Student {
+public class Student extends RepresentationModel<Student>{
 
    // private static final long SerializableUID = 1L;
     
@@ -144,5 +146,15 @@ public class Student {
                 + status + ", note1=" + note1 + ", note2=" + note2 + ", average=" + average + "]";
     }
 
+    public StudentStatus resultStudent(){
+
+        if(this.average > 6){
+            return StudentStatus.APPROVED;
+        }else if(this.average  < 6 && this.average  > 4){
+            return StudentStatus.RECOVERY;
+         }else{
+            return StudentStatus.DISAPPROVED;
+         }
+    }
     
 }
