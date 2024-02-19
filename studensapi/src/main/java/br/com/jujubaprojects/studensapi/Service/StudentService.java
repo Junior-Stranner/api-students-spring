@@ -14,6 +14,7 @@ import br.com.jujubaprojects.studensapi.DTO.StudentDTO;
 import br.com.jujubaprojects.studensapi.Model.Student;
 import br.com.jujubaprojects.studensapi.Repository.StudentRepository;
 //import br.com.jujubaprojects.studensapi.mapper.DozerMapper;
+import br.com.jujubaprojects.studensapi.exeptions.ResourceNotFoundException;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -26,6 +27,7 @@ public class StudentService {
     @Autowired 
     StudentRepository studentRepository;
 
+    @SuppressWarnings("null")
     public List<StudentDTO> allStudents() {
         // Obter todos os estudantes do repositório
         List<Student> students = this.studentRepository.findAll();
@@ -52,7 +54,8 @@ public class StudentService {
     }
     
 
-   public ResponseEntity<Student> create(Student student) {
+   @SuppressWarnings("null")
+public ResponseEntity<Student> create(Student student) {
   //   List<Student> students = this.studentRepository.findAll();
     /*  boolean existingStudent = students.stream().anyMatch(existingStudent -> existingStudent.getRegistration().equals(student.getRegistration()));
 
@@ -94,28 +97,31 @@ public class StudentService {
      }
    }
 
-   public Student findByIdStudent(Long id) {
-    Optional<Student> optionalStudent = this.studentRepository.findById(id);
+   @SuppressWarnings("null")
+public Student findByIdStudent(Long id) {
+    Student existingStudent = this.studentRepository.findById(id)
+    .orElseThrow(() -> new ResourceNotFoundException("No person found with ID: " + id));
 
-    if (optionalStudent.isPresent()) {
-        Student student = optionalStudent.get();
+   // if (optionalStudent.isPresent()) {
+    //    Student student = optionalStudent.get();
         
         // Obter a média das notas do aluno
         double average = this.studentRepository.findAverageNote();
         
         // Criar uma entity para o aluno com a média das notas atribuída
-        student.setAverage(average);
+        existingStudent.setAverage(average);
 
-        student.add(linkTo(methodOn(StudentController.class).findById(id)).withSelfRel());
+        existingStudent.add(linkTo(methodOn(StudentController.class).findById(id)).withSelfRel());
 
-        return student;
-    } else {
-        throw new EntityNotFoundException("Student not found with id: " + id);
-    }
+        return existingStudent;
+  /*   } else {
+        throw new EntityNotFoundException("Student not found with id: " + existingStudent);
+    }*/
 }
 
 
-   public StudentDTO upateStudent(StudentDTO studentDTO){
+   @SuppressWarnings("null")
+public StudentDTO upateStudent(StudentDTO studentDTO){
 
     Optional<Student> optionalStudent = this.studentRepository.findById(studentDTO.getId());
 
@@ -138,7 +144,8 @@ public class StudentService {
     }
    
    }
-   public void deleteStudent(Long id){
+   @SuppressWarnings("null")
+public void deleteStudent(Long id){
     Student deleteStudent = this.studentRepository.findById(id).get();
     this.studentRepository.delete(deleteStudent);
    }
