@@ -2,8 +2,8 @@ package br.com.jujubaprojects.studensapi.Model;
 
 import java.time.LocalDate;
 
+import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -48,6 +48,7 @@ public class Student extends RepresentationModel<Student>{
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate birthDay;
 
+    @ReadOnlyProperty
     @Enumerated(EnumType.STRING)
     private StudentStatus status;
 
@@ -55,6 +56,7 @@ public class Student extends RepresentationModel<Student>{
     @Max(10)
     private double note1 , note2;
 
+    @ReadOnlyProperty
     private double average;
 
     public Student(){}

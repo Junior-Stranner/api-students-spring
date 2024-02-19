@@ -1,4 +1,6 @@
 package br.com.jujubaprojects.studensapi.DTO;
+import java.util.Map;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -18,7 +20,7 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
     private String firstname;
     private StudentStatus status;
     private double note1 , note2;
-    private double average;
+    private Double  average;
 
     public StudentDTO(){
         
@@ -69,7 +71,7 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
     public void setNote2(double note2) {
         this.note2 = note2;
     }
-    public double getAverage() {
+    public  Double getAverage() {
         return average;
     }
     public void setAverage(double average) {
@@ -100,5 +102,6 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
             return false;
         return true;
     }
+
     
 }

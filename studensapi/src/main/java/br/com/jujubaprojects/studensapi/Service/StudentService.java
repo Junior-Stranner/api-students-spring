@@ -2,6 +2,7 @@ package br.com.jujubaprojects.studensapi.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import br.com.jujubaprojects.studensapi.Controller.StudentController;
 import br.com.jujubaprojects.studensapi.DTO.StudentDTO;
 import br.com.jujubaprojects.studensapi.Model.Student;
 import br.com.jujubaprojects.studensapi.Repository.StudentRepository;
+import br.com.jujubaprojects.studensapi.enums.StudentStatus;
 //import br.com.jujubaprojects.studensapi.mapper.DozerMapper;
 import br.com.jujubaprojects.studensapi.exeptions.ResourceNotFoundException;
 
@@ -29,29 +31,27 @@ public class StudentService {
 
     @SuppressWarnings("null")
     public List<StudentDTO> allStudents() {
-        // Obter todos os estudantes do repositório
-        List<Student> students = this.studentRepository.findAll();
-        
-        // Calcular a média das notas de todos os estudantes
-        for (Student student : students) {
-            double average = (student.getNote1() + student.getNote2()) / 2;
-            student.setAverage(average);
-            student.setStatus(student.resultStudent());
-        }
-        // Mapear os estudantes para DTOs e adicionar a média a cada DTO
-        List<StudentDTO> studentDTOs = students.stream()
-                                               .map(student -> {
-                                                   StudentDTO dto = new StudentDTO(student);
-                                                   dto.setAverage(student.getAverage());
-                                                   return dto;
-                                               })
-                                               .collect(Collectors.toList());
-                                          
-		// Adiciona links de auto-relacionamento usando HATEOAS
-		studentDTOs.forEach(s -> s.add(linkTo(methodOn(StudentController.class).findById(s.getId())).withSelfRel()));
-	
-        return studentDTOs;
-    }
+    // Obter todos os estudantes do repositório
+    List<Student> students = this.studentRepository.findAll();
+    
+    // Mapear os estudantes para DTOs e adicionar a média a cada DTO
+      List<StudentDTO> studentDTOs = students.stream()
+                                       .map(student -> {
+                                               double average = (student.getNote1() + student.getNote2()) / 2.0;
+                                               StudentStatus status = student.resultStudent();
+                                               StudentDTO dto = new StudentDTO(student);
+                                               dto.setAverage(average);
+                                               dto.setStatus(status);
+                                               return dto;
+                                           })
+                                           .collect(Collectors.toList());
+                                      
+    // Adiciona links de auto-relacionamento usando HATEOAS
+    studentDTOs.forEach(s -> s.add(linkTo(methodOn(StudentController.class).findById(s.getId())).withSelfRel()));
+
+     return studentDTOs;
+}
+
     
 
    @SuppressWarnings("null")
@@ -74,7 +74,8 @@ public ResponseEntity<Student> create(Student student) {
       Student savedStudent = this.studentRepository.save(student);
 
      //calcula a média e joga para a varriável avarge
-     double average = this.studentRepository.findAverageNote();
+     double average = this.studentRepository.findAverageNoteByStudentId(student.getId());
+   
 
      //adiciono a média para o aluno salvo 
      savedStudent.setAverage(average);
@@ -98,52 +99,50 @@ public ResponseEntity<Student> create(Student student) {
    }
 
    @SuppressWarnings("null")
-public Student findByIdStudent(Long id) {
+   public Student findByIdStudent(Long id) {
+    // Buscar o aluno pelo ID
     Student existingStudent = this.studentRepository.findById(id)
-    .orElseThrow(() -> new ResourceNotFoundException("No person found with ID: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("No student found with ID: " + id));
 
-   // if (optionalStudent.isPresent()) {
-    //    Student student = optionalStudent.get();
-        
-        // Obter a média das notas do aluno
-        double average = this.studentRepository.findAverageNote();
-        
-        // Criar uma entity para o aluno com a média das notas atribuída
+    // Buscar a média das notas para o aluno pelo ID
+    Double average = this.studentRepository.findAverageNoteByStudentId(id);
+   
+
+    if (average != null) {
+        // Atualizar a média e o status do aluno
         existingStudent.setAverage(average);
+        existingStudent.setStatus(existingStudent.resultStudent());
 
+        // Adicionar link de auto-relacionamento usando HATEOAS
         existingStudent.add(linkTo(methodOn(StudentController.class).findById(id)).withSelfRel());
+    }
 
-        return existingStudent;
-  /*   } else {
-        throw new EntityNotFoundException("Student not found with id: " + existingStudent);
-    }*/
+    return existingStudent;
 }
 
 
-   @SuppressWarnings("null")
-public StudentDTO upateStudent(StudentDTO studentDTO){
 
+   @SuppressWarnings("null")
+   public StudentDTO updateStudent(StudentDTO studentDTO){
     Optional<Student> optionalStudent = this.studentRepository.findById(studentDTO.getId());
 
-      if(optionalStudent.isPresent()){
+    if(optionalStudent.isPresent()){
         Student existingStudent = optionalStudent.get();
 
         existingStudent.setFirstname(studentDTO.getFirstname());
         existingStudent.setNote1(studentDTO.getNote1());
         existingStudent.setNote2(studentDTO.getNote2());
-        existingStudent.setAverage(studentDTO.getAverage());
-        existingStudent.setStatus(studentDTO.getStatus());
 
-     Student student = this.studentRepository.save(existingStudent);
+        Student updatedStudent = this.studentRepository.save(existingStudent); // Salvando as alterações no banco de dados
 
-     student.add(linkTo(methodOn(StudentController.class).findById(student.getId())).withSelfRel());
+        updatedStudent.add(linkTo(methodOn(StudentController.class).findById(updatedStudent.getId())).withSelfRel());
 
-        return new StudentDTO(student);
-    } else{
-        throw new EntityNotFoundException("student not found !");
+        return new StudentDTO(updatedStudent); // Retornando o estudante atualizado
+    } else {
+        throw new EntityNotFoundException("Student not found with ID: " + studentDTO.getId());
     }
-   
-   }
+}
+
    @SuppressWarnings("null")
 public void deleteStudent(Long id){
     Student deleteStudent = this.studentRepository.findById(id).get();

@@ -3,7 +3,7 @@ package br.com.jujubaprojects.studensapi.enums;
 public enum StudentStatus {   
    APPROVED,
    DISAPPROVED,
-   RECOVERY;
+   RECOVERY, StudentStatus;
 
 
     private String status;

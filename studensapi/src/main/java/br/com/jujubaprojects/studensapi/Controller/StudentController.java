@@ -119,8 +119,8 @@ public class StudentController {
 			@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
 		}
 	)
-    public StudentDTO updateStudent(StudentDTO studentDTO){
-        return this.studentService.upateStudent(studentDTO);
+    public StudentDTO updateStudent(@RequestBody StudentDTO studentDTO){
+        return this.studentService.updateStudent(studentDTO);
     }
 
     @GetMapping(value = "/count", produces = MediaType.APPLICATION_JSON_VALUE)
