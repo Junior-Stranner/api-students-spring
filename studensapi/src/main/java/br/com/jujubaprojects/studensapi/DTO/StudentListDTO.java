@@ -1,8 +1,10 @@
 package br.com.jujubaprojects.studensapi.DTO;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import br.com.jujubaprojects.studensapi.Model.StudentList;
 
-public class StudentListDTO {
+public class StudentListDTO extends RepresentationModel<StudentListDTO> {
     
     private long id;
     private String name;
