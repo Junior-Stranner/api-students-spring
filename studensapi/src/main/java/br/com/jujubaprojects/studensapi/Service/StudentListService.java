@@ -1,19 +1,19 @@
 package br.com.jujubaprojects.studensapi.Service;
 
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import br.com.jujubaprojects.studensapi.Controller.StudentController;
+import br.com.jujubaprojects.studensapi.Controller.StudentListController;
 import br.com.jujubaprojects.studensapi.DTO.StudentListDTO;
-import br.com.jujubaprojects.studensapi.Model.Student;
 import br.com.jujubaprojects.studensapi.Model.StudentList;
 import br.com.jujubaprojects.studensapi.Repository.StudentListRepository;
 import br.com.jujubaprojects.studensapi.exeptions.ResourceNotFoundException;
@@ -27,7 +27,15 @@ public class StudentListService {
 
     public List<StudentListDTO> findAllList(){
       List<StudentList>  studentLists = this.studentListRepository.findAll();
-        return  studentLists.stream().map(x -> new StudentListDTO(x)).toList();
+
+       // Mapear os objetos StudentList para StudentListDTO
+     List<StudentListDTO> studentListDTOs = studentLists.stream()
+            .map(StudentListDTO::new)
+            .collect(Collectors.toList());
+
+      studentListDTOs.forEach(s -> s.add(linkTo(methodOn(StudentListController.class).findById(s.getId())).withSelfRel()));
+
+        return studentListDTOs;
     }
 
     public ResponseEntity<?> createStudentList(StudentListDTO studentListDTO) {
@@ -58,6 +66,9 @@ public class StudentListService {
                 .orElseThrow(() -> new ResourceNotFoundException("No Student list found with ID: " + id));
         // Converter a entidade para DTO
         StudentListDTO studentListDTO = new StudentListDTO(existingStudentList);
+
+        studentListDTO.add(linkTo(methodOn(StudentController.class).findById(id)).withSelfRel());
+
         // Retornando o DTO
         return studentListDTO;
     }

@@ -9,14 +9,15 @@ public class StudentListDTO extends RepresentationModel<StudentListDTO> {
     private long id;
     private String name;
 
-
     
+    public StudentListDTO() {
+       
+    }
+
     public StudentListDTO(StudentList entity) {
         this.id = entity.getId();
         this.name = entity.getName();
     }
-
-
 
     public long getId() {
         return id;

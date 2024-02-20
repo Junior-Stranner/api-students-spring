@@ -71,7 +71,7 @@ public class StudentController {
 
     @PostMapping(produces = { MediaType.APPLICATION_JSON_VALUE })
 	@Operation(summary = "Adds a new Student",
-		description = "Adds a new Student by passing in a JSON, XML or YML representation of the person!",
+		description = "Adds a new Student by passing in a JSON, XML or YML representation of the Student!",
 		tags = {"Student"},
 		responses = {
 			@ApiResponse(description = "Success", responseCode = "200",

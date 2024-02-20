@@ -25,6 +25,7 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
         
     }
 
+
     @SuppressWarnings("null")
     public StudentDTO(Student student) {
         BeanUtils.copyProperties(student, this);
