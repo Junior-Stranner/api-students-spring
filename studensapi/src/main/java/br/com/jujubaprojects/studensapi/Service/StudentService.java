@@ -130,8 +130,10 @@ public ResponseEntity<Student> create(Student student) {
         Student existingStudent = optionalStudent.get();
 
         existingStudent.setFirstname(studentDTO.getFirstname());
+        existingStudent.setLastname(studentDTO.getFirstname());
         existingStudent.setNote1(studentDTO.getNote1());
         existingStudent.setNote2(studentDTO.getNote2());
+        
 
         Student updatedStudent = this.studentRepository.save(existingStudent); // Salvando as alterações no banco de dados
 

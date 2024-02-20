@@ -20,6 +20,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name = "tb_student")
@@ -42,6 +43,7 @@ public class Student extends RepresentationModel<Student>{
     private String registration;
 
     @NotBlank(message = "Enter the gender the students gender")
+    @Pattern(regexp = "^(male|female)$", message = "Gender must be either 'male' or 'female'")
     private String gender;
 
     @DateTimeFormat(pattern = "dd/MM/yyyy")

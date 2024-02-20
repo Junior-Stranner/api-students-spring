@@ -1,6 +1,4 @@
 package br.com.jujubaprojects.studensapi.DTO;
-import java.util.Map;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -18,6 +16,7 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
  //  @Mapping("id") // Mapping apensa funciona com DozerMApper
     private Long id;
     private String firstname;
+    private String lastname;
     private StudentStatus status;
     private double note1 , note2;
     private Double  average;
@@ -26,20 +25,11 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
         
     }
 
-    public StudentDTO(Long id, String firstname, StudentStatus status, double note1, double note2, double average) {
-        this.id = id;
-        this.firstname = firstname;
-        this.status = status;
-        this.note1 = note1;
-        this.note2 = note2;
-    }
-
     @SuppressWarnings("null")
     public StudentDTO(Student student) {
         BeanUtils.copyProperties(student, this);
 
     }
-
 
     public Long getId() {
         return id;
@@ -50,6 +40,16 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
     public String getFirstname() {
         return firstname;
     }
+
+    
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
     public void setFirstname(String firstname) {
         this.firstname = firstname;
     }
