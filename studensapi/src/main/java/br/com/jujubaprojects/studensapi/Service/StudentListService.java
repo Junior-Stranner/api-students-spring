@@ -5,6 +5,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +15,24 @@ import org.springframework.stereotype.Service;
 import br.com.jujubaprojects.studensapi.Controller.StudentController;
 import br.com.jujubaprojects.studensapi.Controller.StudentListController;
 import br.com.jujubaprojects.studensapi.DTO.StudentListDTO;
+import br.com.jujubaprojects.studensapi.Model.Student;
 import br.com.jujubaprojects.studensapi.Model.StudentList;
 import br.com.jujubaprojects.studensapi.Repository.StudentListRepository;
+import br.com.jujubaprojects.studensapi.Repository.StudentRepository;
 import br.com.jujubaprojects.studensapi.exeptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class StudentListService {
 
     @Autowired
     StudentListRepository studentListRepository;
+
+    @Autowired
+    StudentRepository studentRepository;
     
 
+    @SuppressWarnings("null")
     public List<StudentListDTO> findAllList(){
       List<StudentList>  studentLists = this.studentListRepository.findAll();
 
@@ -44,13 +52,12 @@ public class StudentListService {
             .anyMatch(list -> list.getName().equals(studentListDTO.getName()));   
     
         if (existingStudentList) {
-            return ResponseEntity.badRequest().body("Student list already exists!");
+            return ResponseEntity.badRequest().body("Student list with the same name already exists!");
         } else {
             // Criando uma nova instância de StudentList a partir do DTO
             StudentList newStudentList = new StudentList();
             newStudentList.setName(studentListDTO.getName());
             // Você pode definir outros atributos aqui conforme necessário
-    
             // Salvando a nova lista de estudantes
             StudentList createdStudentList = this.studentListRepository.save(newStudentList);
     
@@ -59,7 +66,10 @@ public class StudentListService {
             return ResponseEntity.ok().body("Student list created successfully!");
         }
     }
+    
 
+
+    @SuppressWarnings("null")
     public StudentListDTO findByIdStudentList(Long id) {
         // Buscar a lista de estudantes pelo ID
         StudentList existingStudentList = this.studentListRepository.findById(id)
@@ -72,7 +82,25 @@ public class StudentListService {
         // Retornando o DTO
         return studentListDTO;
     }
-    
+
+  public StudentListDTO addStudentToList(long studentId, long studentListId) {
+    // Encontre o estudante e a lista de estudantes pelos seus IDs
+    Optional<Student> studentOptional = studentRepository.findById(studentId);
+    Optional<StudentList> studentListOptional = studentListRepository.findById(studentListId);
+
+    if (studentOptional.isPresent() && studentListOptional.isPresent()) {
+        Student student = studentOptional.get();
+        StudentList studentList = studentListOptional.get();
+
+        // Adicione o estudante à lista de estudantes
+        studentList.getStudents().add(student);
+        studentListRepository.save(studentList);
+
+        return new StudentListDTO(studentList); // ou qualquer coisa que você queira retornar
+    } else {
+        throw new EntityNotFoundException("Student or StudentList not found");
+    }
+}
 
 }
     

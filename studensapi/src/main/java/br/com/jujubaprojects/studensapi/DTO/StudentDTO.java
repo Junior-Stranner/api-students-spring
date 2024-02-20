@@ -1,4 +1,6 @@
 package br.com.jujubaprojects.studensapi.DTO;
+import java.util.List;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.RepresentationModel;
 
@@ -78,7 +80,7 @@ public class StudentDTO extends RepresentationModel<StudentDTO>{
     public void setAverage(double average) {
         this.average = average;
     }
-
+    
     @Override
     public int hashCode() {
         final int prime = 31;

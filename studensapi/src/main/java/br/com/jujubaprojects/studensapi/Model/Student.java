@@ -1,12 +1,14 @@
 package br.com.jujubaprojects.studensapi.Model;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import br.com.jujubaprojects.studensapi.enums.StudentStatus;
@@ -16,6 +18,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -61,87 +65,148 @@ public class Student extends RepresentationModel<Student>{
     @ReadOnlyProperty
     private double average;
 
+    @ManyToMany(mappedBy = "students")
+ /*   @JoinTable(name = "student_studentList",
+     joinColumns = {@JoinColumn(name = "student_id",referencedColumnName = "id")},
+    inverseJoinColumns = {@JoinColumn(name = "studentList_id", referencedColumnName ="id")})*/
+    @JsonIgnoreProperties("students")
+    private List<StudentList> studentList;
+
     public Student(){}
+
+  
 
     public Long getId() {
         return id;
     }
 
-    public Long setId(Long id) {
-        return this.id = id;
+
+
+    public void setId(Long id) {
+        this.id = id;
     }
+
+
 
     public String getFirstname() {
         return firstname;
     }
 
+
+
     public void setFirstname(String firstname) {
         this.firstname = firstname;
     }
+
+
 
     public String getLastname() {
         return lastname;
     }
 
+
+
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
+
+
 
     public String getRegistration() {
         return registration;
     }
 
+
+
     public void setRegistration(String registration) {
         this.registration = registration;
     }
+
+
 
     public String getGender() {
         return gender;
     }
 
+
+
     public void setGender(String gender) {
         this.gender = gender;
     }
+
+
 
     public LocalDate getBirthDay() {
         return birthDay;
     }
 
+
+
     public void setBirthDay(LocalDate birthDay) {
         this.birthDay = birthDay;
     }
+
+
 
     public StudentStatus getStatus() {
         return status;
     }
 
+
+
     public void setStatus(StudentStatus status) {
         this.status = status;
     }
+
+
 
     public double getNote1() {
         return note1;
     }
 
+
+
     public void setNote1(double note1) {
         this.note1 = note1;
     }
+
+
 
     public double getNote2() {
         return note2;
     }
 
+
+
     public void setNote2(double note2) {
         this.note2 = note2;
     }
+
+
 
     public double getAverage() {
         return average;
     }
 
+
+
     public void setAverage(double average) {
         this.average = average;
     }
+
+
+
+    public List<StudentList> getStudentList() {
+        return studentList;
+    }
+
+
+
+    public void setStudentList(List<StudentList> studentList) {
+        this.studentList = studentList;
+    }
+
+
 
     @Override
     public String toString() {

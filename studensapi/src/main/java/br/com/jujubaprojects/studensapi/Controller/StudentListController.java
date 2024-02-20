@@ -3,6 +3,7 @@ package br.com.jujubaprojects.studensapi.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,11 +11,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jujubaprojects.studensapi.DTO.StudentListDTO;
 import br.com.jujubaprojects.studensapi.Model.Student;
 import br.com.jujubaprojects.studensapi.Service.StudentListService;
+import br.com.jujubaprojects.studensapi.Service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,6 +33,9 @@ public class StudentListController {
 
     @Autowired
     StudentListService studentListService;
+
+    @Autowired
+    StudentService studentService;
     
      @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Finds all Student lists", description = "Finds all Student lists",
@@ -68,6 +74,12 @@ public class StudentListController {
     public ResponseEntity<?> create(@RequestBody @Valid StudentListDTO studentListDTO){
         return this.studentListService.createStudentList(studentListDTO);
 
+    }
+
+  @PostMapping("/addStudent")
+    public ResponseEntity<StudentListDTO> addStudentToList(@RequestParam long studentListId,@RequestParam long studentId) {
+        StudentListDTO studentListDTO = studentListService.addStudentToList(studentId, studentListId);
+        return new ResponseEntity<>(studentListDTO, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)

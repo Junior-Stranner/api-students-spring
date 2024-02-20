@@ -1,5 +1,7 @@
 package br.com.jujubaprojects.studensapi.DTO;
 
+import java.util.List;
+
 import org.springframework.hateoas.RepresentationModel;
 
 import br.com.jujubaprojects.studensapi.Model.StudentList;
@@ -8,6 +10,8 @@ public class StudentListDTO extends RepresentationModel<StudentListDTO> {
     
     private long id;
     private String name;
+ private List<Long> STudentIds;
+
 
     
     public StudentListDTO() {
@@ -39,6 +43,14 @@ public class StudentListDTO extends RepresentationModel<StudentListDTO> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Long> getSTudentIds() {
+        return STudentIds;
+    }
+
+    public void setSTudentIds(List<Long> sTudentIds) {
+        STudentIds = sTudentIds;
     }
 
     
