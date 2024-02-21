@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -76,15 +77,14 @@ public class StudentListController {
 
     }
 
-    @PostMapping("/addStudent")
-    public ResponseEntity<StudentListDTO> addStudentToList(@RequestParam(name = "id") long id, @RequestParam long studentId) {
-        StudentListDTO studentListDTO = studentListService.addStudentToList(studentId, id);
+    @PostMapping("/addStudents/{studentListId}")
+    public ResponseEntity<StudentListDTO> addStudentsToList(@PathVariable Long studentListId, @RequestBody List<Student> student) {
+        StudentListDTO studentListDTO = studentListService.addStudentsToList(student, studentListId);
         return new ResponseEntity<>(studentListDTO, HttpStatus.OK);
     }
     
-    
-    
 
+    
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Finds a Student list", description = "Finds a Student list",
     tags = {"StudentList"},
@@ -101,5 +101,22 @@ public class StudentListController {
   )
    public StudentListDTO findById(@PathVariable("id") Long id){
         return this.studentListService.findByIdStudentList(id);
+    }
+
+    
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deletes a Student List",
+		description = "Deletes a Student by passing in a JSON, XML or YML representation of the List!",
+		tags = {"Student"},
+		responses = {
+			@ApiResponse(description = "No Content", responseCode = "204", content = @Content),
+			@ApiResponse(description = "Bad Request", responseCode = "400", content = @Content),
+			@ApiResponse(description = "Unauthorized", responseCode = "401", content = @Content),
+			@ApiResponse(description = "Not Found", responseCode = "404", content = @Content),
+			@ApiResponse(description = "Internal Error", responseCode = "500", content = @Content),
+		}
+	)
+    public void deleteStudent(@PathVariable("id") long id){
+        this.studentListService.deleteStudentList(id);
     }
 }

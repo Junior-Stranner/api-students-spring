@@ -8,7 +8,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import br.com.jujubaprojects.studensapi.enums.StudentStatus;
@@ -19,7 +18,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -65,12 +64,12 @@ public class Student extends RepresentationModel<Student>{
     @ReadOnlyProperty
     private double average;
 
-    @ManyToMany(mappedBy = "students")
- /*   @JoinTable(name = "student_studentList",
-     joinColumns = {@JoinColumn(name = "student_id",referencedColumnName = "id")},
-    inverseJoinColumns = {@JoinColumn(name = "studentList_id", referencedColumnName ="id")})*/
+   /*   @ManyToMany(mappedBy = "students")
     @JsonIgnoreProperties("students")
-    private List<StudentList> studentList;
+    private List<StudentList> studentList;*/
+
+    @OneToMany(mappedBy = "student")
+    private List<StudentList_Student> list_Students;
 
     public Student(){}
 
@@ -196,15 +195,6 @@ public class Student extends RepresentationModel<Student>{
 
 
 
-    public List<StudentList> getStudentList() {
-        return studentList;
-    }
-
-
-
-    public void setStudentList(List<StudentList> studentList) {
-        this.studentList = studentList;
-    }
 
 
 

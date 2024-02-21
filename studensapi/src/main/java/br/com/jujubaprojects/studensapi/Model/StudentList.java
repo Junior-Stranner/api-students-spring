@@ -2,15 +2,11 @@ package br.com.jujubaprojects.studensapi.Model;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,12 +19,15 @@ public class StudentList {
 
     private String name;
 
-      @ManyToMany
+  /*   @ManyToMany
     @JoinTable(name = "student_studentList",
-    joinColumns = {@JoinColumn(name = "studentList_id",referencedColumnName = "id")},
-    inverseJoinColumns = {@JoinColumn(name = "student_id", referencedColumnName ="id")})
-    @JsonIgnoreProperties("StudentList")
-    private List<Student> students;
+               joinColumns = @JoinColumn(name = "studentList_id"),
+               inverseJoinColumns = @JoinColumn(name = "student_id"))
+    @JsonIgnoreProperties("studentLists")
+    private List<Student> students;*/
+
+    @OneToMany(mappedBy = "studentList")
+    private List<StudentList_Student> list_Students;
 
     
     public StudentList() {
@@ -61,15 +60,6 @@ public class StudentList {
         this.name = name;
     }
 
-
-    public List<Student> getStudents() {
-        return students;
-    }
-
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
 
 
     @Override
