@@ -215,15 +215,15 @@ public class Student extends RepresentationModel<Student>{
                 + status + ", note1=" + note1 + ", note2=" + note2 + ", average=" + average + "]";
     }
 
-    public StudentStatus resultStudent(){
-
-        if(this.average > 6){
+    public StudentStatus resultStudent(double average) {
+        if (average >= 6) {
             return StudentStatus.APPROVED;
-        }else if(this.average  < 6 && this.average  > 4){
+        } else if (average >= 4) {
             return StudentStatus.RECOVERY;
-         }else{
+        } else {
             return StudentStatus.DISAPPROVED;
-         }
+        }
     }
+    
     
 }

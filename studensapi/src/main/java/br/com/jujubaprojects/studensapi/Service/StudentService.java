@@ -30,26 +30,27 @@ public class StudentService {
 
     @SuppressWarnings("null")
     public List<StudentDTO> allStudents() {
-    // Obter todos os estudantes do repositório
-    List<Student> students = this.studentRepository.findAll();
+        // Obter todos os estudantes do repositório
+        List<Student> students = this.studentRepository.findAll();
+        
+        // Mapear os estudantes para DTOs e adicionar a média a cada DTO
+        List<StudentDTO> studentDTOs = students.stream()
+            .map(student -> {
+                double average = (student.getNote1() + student.getNote2()) / 2.0;
+                StudentStatus status = student.resultStudent(average); // Passando a média para o método resultStudent
+                StudentDTO dto = new StudentDTO(student);
+                dto.setAverage(average);
+                dto.setStatus(status);
+                return dto;
+            })
+            .collect(Collectors.toList());
+                                          
+        // Adiciona links de auto-relacionamento usando HATEOAS
+        studentDTOs.forEach(s -> s.add(linkTo(methodOn(StudentController.class).findById(s.getId())).withSelfRel()));
     
-    // Mapear os estudantes para DTOs e adicionar a média a cada DTO
-      List<StudentDTO> studentDTOs = students.stream()
-                                       .map(student -> {
-                                               double average = (student.getNote1() + student.getNote2()) / 2.0;
-                                               StudentStatus status = student.resultStudent();
-                                               StudentDTO dto = new StudentDTO(student);
-                                               dto.setAverage(average);
-                                               dto.setStatus(status);
-                                               return dto;
-                                           })
-                                           .collect(Collectors.toList());
-                                      
-    // Adiciona links de auto-relacionamento usando HATEOAS
-    studentDTOs.forEach(s -> s.add(linkTo(methodOn(StudentController.class).findById(s.getId())).withSelfRel()));
-
-     return studentDTOs;
-}
+        return studentDTOs;
+    }
+    
 
     
 
@@ -78,7 +79,7 @@ public ResponseEntity<Student> create(Student student) {
 
      //adiciono a média para o aluno salvo 
      savedStudent.setAverage(average);
-     savedStudent.setStatus(savedStudent.resultStudent());
+     savedStudent.setStatus(savedStudent.resultStudent(average));
 
      student.add(linkTo(methodOn(StudentController.class).findById(student.getId())).withSelfRel());
 
@@ -110,7 +111,7 @@ public ResponseEntity<Student> create(Student student) {
     if (average != null) {
         // Atualizar a média e o status do aluno
         existingStudent.setAverage(average);
-        existingStudent.setStatus(existingStudent.resultStudent());
+        existingStudent.setStatus(existingStudent.resultStudent(average));
 
         // Adicionar link de auto-relacionamento usando HATEOAS
         existingStudent.add(linkTo(methodOn(StudentController.class).findById(id)).withSelfRel());

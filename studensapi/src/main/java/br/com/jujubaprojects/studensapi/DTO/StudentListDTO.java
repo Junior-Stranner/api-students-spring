@@ -10,7 +10,7 @@ public class StudentListDTO extends RepresentationModel<StudentListDTO> {
     
     private long id;
     private String name;
- private List<Long> STudentIds;
+ private List<Long> StudentIds;
 
 
     
@@ -45,13 +45,14 @@ public class StudentListDTO extends RepresentationModel<StudentListDTO> {
         this.name = name;
     }
 
-    public List<Long> getSTudentIds() {
-        return STudentIds;
+    public List<Long> getStudentIds() {
+        return StudentIds;
     }
 
-    public void setSTudentIds(List<Long> sTudentIds) {
-        STudentIds = sTudentIds;
+    public void setStudentIds(List<Long> studentIds) {
+        StudentIds = studentIds;
     }
 
+   
     
 }

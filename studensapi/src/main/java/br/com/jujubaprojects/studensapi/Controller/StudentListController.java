@@ -76,11 +76,14 @@ public class StudentListController {
 
     }
 
-  @PostMapping("/addStudent")
-    public ResponseEntity<StudentListDTO> addStudentToList(@RequestParam long studentListId,@RequestParam long studentId) {
-        StudentListDTO studentListDTO = studentListService.addStudentToList(studentId, studentListId);
+    @PostMapping("/addStudent")
+    public ResponseEntity<StudentListDTO> addStudentToList(@RequestParam(name = "id") long id, @RequestParam long studentId) {
+        StudentListDTO studentListDTO = studentListService.addStudentToList(studentId, id);
         return new ResponseEntity<>(studentListDTO, HttpStatus.OK);
     }
+    
+    
+    
 
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Finds a Student list", description = "Finds a Student list",
