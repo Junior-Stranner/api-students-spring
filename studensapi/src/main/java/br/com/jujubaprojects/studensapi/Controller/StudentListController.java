@@ -17,6 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jujubaprojects.studensapi.DTO.StudentListDTO;
 import br.com.jujubaprojects.studensapi.Model.Student;
+import br.com.jujubaprojects.studensapi.Model.StudentList_Student;
+import br.com.jujubaprojects.studensapi.Model.pk_StudentList_Student;
+import br.com.jujubaprojects.studensapi.Repository.StudentList_StudentRepository;
 import br.com.jujubaprojects.studensapi.Service.StudentListService;
 import br.com.jujubaprojects.studensapi.Service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,6 +40,9 @@ public class StudentListController {
 
     @Autowired
     StudentService studentService;
+
+    @Autowired
+    StudentList_StudentRepository studentListStudentService;
     
      @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Finds all Student lists", description = "Finds all Student lists",
@@ -77,10 +83,10 @@ public class StudentListController {
 
     }
 
-    @PostMapping("/addStudents/{studentListId}")
-    public ResponseEntity<StudentListDTO> addStudentsToList(@PathVariable Long studentListId, @RequestBody List<Student> student) {
-        StudentListDTO studentListDTO = studentListService.addStudentsToList(student, studentListId);
-        return new ResponseEntity<>(studentListDTO, HttpStatus.OK);
+    @PostMapping("/associate")
+    public ResponseEntity<?> associateStudentWithList(@RequestBody StudentList_Student studentListStudent) {
+        studentListStudentService.createAssociation();
+        return new ResponseEntity<>("Students associated with list successfully!", HttpStatus.CREATED);
     }
     
 

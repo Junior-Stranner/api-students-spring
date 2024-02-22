@@ -15,12 +15,13 @@ import org.springframework.stereotype.Service;
 import br.com.jujubaprojects.studensapi.Controller.StudentController;
 import br.com.jujubaprojects.studensapi.Controller.StudentListController;
 import br.com.jujubaprojects.studensapi.DTO.StudentListDTO;
-import br.com.jujubaprojects.studensapi.Model.Student;
 import br.com.jujubaprojects.studensapi.Model.StudentList;
+import br.com.jujubaprojects.studensapi.Model.StudentList_Student;
+import br.com.jujubaprojects.studensapi.Model.pk_StudentList_Student;
 import br.com.jujubaprojects.studensapi.Repository.StudentListRepository;
+import br.com.jujubaprojects.studensapi.Repository.StudentList_StudentRepository;
 import br.com.jujubaprojects.studensapi.Repository.StudentRepository;
 import br.com.jujubaprojects.studensapi.exeptions.ResourceNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class StudentListService {
@@ -30,6 +31,9 @@ public class StudentListService {
 
     @Autowired
     StudentRepository studentRepository;
+
+    @Autowired
+    private StudentList_StudentRepository studentListStudentRepository;
     
 
     @SuppressWarnings("null")
@@ -83,28 +87,20 @@ public class StudentListService {
         return studentListDTO;
     }
 
-  public StudentListDTO addStudentsToList(List<Student> students, long studentListId) {
-        // Encontre a lista de estudantes pelo seu ID
-        Optional<StudentList> studentListOptional = studentListRepository.findById(studentListId);
-
-        if (studentListOptional.isPresent()) {
-            StudentList studentList = studentListOptional.get();
-
-            // Adicione os estudantes à lista de estudantes
-            studentList.getStudents().addAll(students);
-            studentListRepository.save(studentList);
-
-            return new StudentListDTO(studentList); // ou qualquer coisa que você queira retornar
-        } else {
-            throw new EntityNotFoundException("StudentList not found");
-        }
-    }
+  
 
 @SuppressWarnings("null")
 public void deleteStudentList(Long id){
     StudentList deleteStudentList = this.studentListRepository.findById(id).get();
     this.studentListRepository.delete(deleteStudentList);
    }
+
+
+   public StudentList_Student createAssociation(StudentList_Student studentList_Student) {
+        StudentList_Student association = new StudentList_Student();
+        studentListStudentRepository.save(association);
+        return association;
+    }
 
 }
     
