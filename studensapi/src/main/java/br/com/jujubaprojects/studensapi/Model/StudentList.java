@@ -35,10 +35,14 @@ public class StudentList {
     }
 
 
-    public StudentList(Long id, String name) {
+  
+
+    public StudentList(Long id, String name, List<Student> students) {
         this.id = id;
         this.name = name;
+        this.students = students;
     }
+
 
 
 

@@ -102,5 +102,11 @@ public class StudentListService {
     }
 }
 
+@SuppressWarnings("null")
+public void deleteStudentList(Long id){
+    StudentList deleteStudentList = this.studentListRepository.findById(id).get();
+    this.studentListRepository.delete(deleteStudentList);
+   }
+
 }
     
