@@ -1,5 +1,6 @@
 package br.com.jujubaprojects.studensapi.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,7 +16,7 @@ public interface StudentRepository extends JpaRepository<Student , Integer>{
     
    
     @Query("SELECT AVG((s.note1 + s.note2) / 2) FROM Student s WHERE s.id = ?1")
-    Double findAverageNoteByStudentId(Long studentId);
+    Double findAverageNoteByStudentId(Long id);
     
 
     Optional<Student> findById(Long id);

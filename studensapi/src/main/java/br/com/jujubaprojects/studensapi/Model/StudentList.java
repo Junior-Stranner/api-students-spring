@@ -23,12 +23,14 @@ public class StudentList {
 
     private String name;
 
-      @ManyToMany
-    @JoinTable(name = "student_studentList",
-    joinColumns = {@JoinColumn(name = "studentList_id",referencedColumnName = "id")},
-    inverseJoinColumns = {@JoinColumn(name = "student_id", referencedColumnName ="id")})
-    @JsonIgnoreProperties("StudentList")
+    @ManyToMany
+    @JoinTable(name = "student_list_student",
+           joinColumns = @JoinColumn(name = "student_list_id"),
+           inverseJoinColumns = @JoinColumn(name = "student_id"))
+    @JsonIgnoreProperties("studentLists")
     private List<Student> students;
+
+
 
     
     public StudentList() {
@@ -66,14 +68,6 @@ public class StudentList {
     }
 
 
-    public List<Student> getStudents() {
-        return students;
-    }
-
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
 
 
     @Override
@@ -100,6 +94,20 @@ public class StudentList {
         } else if (!id.equals(other.id))
             return false;
         return true;
+    }
+
+
+
+
+    public List<Student> getStudents() {
+        return students;
+    }
+
+
+
+
+    public void setStudents(List<Student> students) {
+        this.students = students;
     }
     
 }

@@ -37,6 +37,8 @@ public class StudentListController {
 
     @Autowired
     StudentService studentService;
+
+    
     
      @GetMapping(produces = { MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Finds all Student lists", description = "Finds all Student lists",
@@ -81,9 +83,10 @@ public class StudentListController {
     public ResponseEntity<StudentListDTO> addStudentToList(@PathVariable long studentListId, @PathVariable long studentId) {
         StudentListDTO studentListDTO = studentListService.addStudentToList(studentId, studentListId);
         return new ResponseEntity<>(studentListDTO, HttpStatus.OK);
+
+
     }
     
-
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Finds a Student list", description = "Finds a Student list",
     tags = {"StudentList"},
@@ -102,9 +105,10 @@ public class StudentListController {
         return this.studentListService.findByIdStudentList(id);
     }
 
+
     @DeleteMapping("/{id}")
-    @Operation(summary = "Deletes a Student",
-		description = "Deletes a Student by passing in a JSON, XML or YML representation of the person!",
+    @Operation(summary = "Deletes a Student List",
+		description = "Deletes a Student by passing in a JSON, XML or YML representation of the List!",
 		tags = {"Student"},
 		responses = {
 			@ApiResponse(description = "No Content", responseCode = "204", content = @Content),
@@ -117,6 +121,5 @@ public class StudentListController {
     public void deleteStudent(@PathVariable("id") long id){
         this.studentListService.deleteStudentList(id);
     }
-
-
+    
 }

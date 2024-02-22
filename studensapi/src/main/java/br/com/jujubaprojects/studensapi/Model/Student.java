@@ -18,8 +18,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -65,12 +65,10 @@ public class Student extends RepresentationModel<Student>{
     @ReadOnlyProperty
     private double average;
 
-    @ManyToMany(mappedBy = "students")
- /*   @JoinTable(name = "student_studentList",
-     joinColumns = {@JoinColumn(name = "student_id",referencedColumnName = "id")},
-    inverseJoinColumns = {@JoinColumn(name = "studentList_id", referencedColumnName ="id")})*/
+     @ManyToMany(mappedBy = "students")
     @JsonIgnoreProperties("students")
     private List<StudentList> studentList;
+
 
     public Student(){}
 
@@ -195,19 +193,7 @@ public class Student extends RepresentationModel<Student>{
     }
 
 
-
-    public List<StudentList> getStudentList() {
-        return studentList;
-    }
-
-
-
-    public void setStudentList(List<StudentList> studentList) {
-        this.studentList = studentList;
-    }
-
-
-
+    @SuppressWarnings("null")
     @Override
     public String toString() {
         return "Student [id=" + id + ", firstname=" + firstname + ", lastname=" + lastname + ", registration="
@@ -218,7 +204,7 @@ public class Student extends RepresentationModel<Student>{
     public StudentStatus resultStudent(double average) {
         if (average > 6) {
             return StudentStatus.APPROVED;
-        } else if (average >= 4) { // Alterado para incluir a condição de média igual ou superior a 4
+        } else if (average >= 4) {
             return StudentStatus.RECOVERY;
         } else {
             return StudentStatus.DISAPPROVED;
@@ -226,3 +212,4 @@ public class Student extends RepresentationModel<Student>{
     }
     
 }
+    

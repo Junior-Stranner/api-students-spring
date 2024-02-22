@@ -30,7 +30,6 @@ public class StudentListService {
 
     @Autowired
     StudentRepository studentRepository;
-    
 
     @SuppressWarnings("null")
     public List<StudentListDTO> findAllList(){
@@ -66,8 +65,25 @@ public class StudentListService {
             return ResponseEntity.ok().body("Student list created successfully!");
         }
     }
-    
 
+    public StudentListDTO addStudentToList(long studentId, long studentListId) {
+        // Encontre o estudante e a lista de estudantes pelos seus IDs
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
+        Optional<StudentList> studentListOptional = studentListRepository.findById(studentListId);
+    
+        if (studentOptional.isPresent() && studentListOptional.isPresent()) {
+            Student student = studentOptional.get();
+            StudentList studentList = studentListOptional.get();
+    
+            // Adicione o estudante à lista de estudantes
+            studentList.getStudents().add(student);
+            studentListRepository.save(studentList);
+    
+            return new StudentListDTO(studentList); // ou qualquer coisa que você queira retornar
+        } else {
+            throw new EntityNotFoundException("Student or StudentList not found");
+        }
+    }    
 
     @SuppressWarnings("null")
     public StudentListDTO findByIdStudentList(Long id) {
@@ -83,30 +99,13 @@ public class StudentListService {
         return studentListDTO;
     }
 
-  public StudentListDTO addStudentToList(long studentId, long studentListId) {
-    // Encontre o estudante e a lista de estudantes pelos seus IDs
-    Optional<Student> studentOptional = studentRepository.findById(studentId);
-    Optional<StudentList> studentListOptional = studentListRepository.findById(studentListId);
-
-    if (studentOptional.isPresent() && studentListOptional.isPresent()) {
-        Student student = studentOptional.get();
-        StudentList studentList = studentListOptional.get();
-
-        // Adicione o estudante à lista de estudantes
-        studentList.getStudents().add(student);
-        studentListRepository.save(studentList);
-
-        return new StudentListDTO(studentList); // ou qualquer coisa que você queira retornar
-    } else {
-        throw new EntityNotFoundException("Student or StudentList not found");
-    }
-}
 
 @SuppressWarnings("null")
 public void deleteStudentList(Long id){
     StudentList deleteStudentList = this.studentListRepository.findById(id).get();
     this.studentListRepository.delete(deleteStudentList);
    }
+
 
 }
     
