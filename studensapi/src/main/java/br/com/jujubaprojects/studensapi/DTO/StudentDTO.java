@@ -1,5 +1,4 @@
 package br.com.jujubaprojects.studensapi.DTO;
-import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.RepresentationModel;

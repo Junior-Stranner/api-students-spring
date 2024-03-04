@@ -4,10 +4,8 @@ package br.com.jujubaprojects.studensapi.Service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +15,12 @@ import org.springframework.stereotype.Service;
 import br.com.jujubaprojects.studensapi.Controller.StudentController;
 import br.com.jujubaprojects.studensapi.Controller.StudentListController;
 import br.com.jujubaprojects.studensapi.DTO.StudentListDTO;
-import br.com.jujubaprojects.studensapi.Model.Student;
 import br.com.jujubaprojects.studensapi.Model.StudentList;
 import br.com.jujubaprojects.studensapi.Repository.StudentListRepository;
 import br.com.jujubaprojects.studensapi.Repository.StudentRepository;
 import br.com.jujubaprojects.studensapi.exeptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+
 
 @Service
 public class StudentListService {
@@ -86,24 +83,29 @@ public class StudentListService {
         } else {
             throw new EntityNotFoundException("Student or StudentList not found");
         }
-    }    
+    }    */
 
-    @Transactional
-    public StudentListDTO addStudentToList(long studentId, long studentListId) {
-        // Encontre o estudante e a lista de estudantes pelos seus IDs
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+      @SuppressWarnings("null")
+   public StudentListDTO updateStudent(StudentList studentList){
+    Optional<StudentList> optinalList = this.studentListRepository.findById(studentList.getId());
 
-        StudentList studentList = studentListRepository.findById(studentListId)
-                .orElseThrow(() -> new EntityNotFoundException("StudentList not found with ID: " + studentListId));
-        // Adicione o estudante à lista de estudantes
-        studentList.addStudent(student);
-        studentListRepository.save(studentList);
+    if(optinalList.isPresent()){
+        StudentList existingStudentList = optinalList.get();
 
-        return new StudentListDTO(studentList); // ou qualquer coisa que você queira retornar
-    }*/
+        existingStudentList.setName(studentList.getName());
+        existingStudentList.setStudents(studentList.getStudents());
 
-    public StudentListDTO addStudentToList(long studentId, long studentListId) {
+        StudentList updatedStudentList = this.studentListRepository.save(existingStudentList); // Salvando as alterações no banco de dados
+
+        updatedStudentList.add(linkTo(methodOn(StudentController.class).findById(updatedStudentList.getId())).withSelfRel());
+
+        return new StudentListDTO(updatedStudentList); // Retornando o estudante atualizado
+    } else {
+        throw new EntityNotFoundException("StudentList not found with ID: " + studentList.getId());
+
+    }
+   }
+  /*   public StudentListDTO addStudentToList(long studentId, long studentListId) {
         Set<Student> studentSet = null;
         StudentList studentList = studentListRepository.findById(studentListId).get();
         Student student = studentRepository.findById(studentId).get();
@@ -113,7 +115,7 @@ public class StudentListService {
         studentList.setStudents(studentSet);
         StudentList addStudentToList = studentListRepository.save(studentList);
         return new StudentListDTO(addStudentToList);
-    }
+    }*/
 
 
     @SuppressWarnings("null")

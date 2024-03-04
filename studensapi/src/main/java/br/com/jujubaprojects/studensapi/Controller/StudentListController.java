@@ -81,9 +81,9 @@ public class StudentListController {
     }
 
 
-    @PutMapping("/{studentListId}/addStudent/{studentId}")
-    public ResponseEntity<StudentListDTO> addStudentToList(@PathVariable long studentListId, @PathVariable long studentId) {
-        StudentListDTO studentListDTO = studentListService.addStudentToList(studentId, studentListId);
+   @PutMapping("/addStudent/{studentListId}")
+    public ResponseEntity<StudentListDTO> addStudentToList(@RequestBody  StudentList studentList) {
+        StudentListDTO studentListDTO = studentListService.updateStudent(studentList);
         return new ResponseEntity<>(studentListDTO, HttpStatus.OK);
     }
     

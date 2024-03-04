@@ -1,15 +1,12 @@
 package br.com.jujubaprojects.studensapi.Model;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import br.com.jujubaprojects.studensapi.enums.StudentStatus;
@@ -19,7 +16,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -29,14 +27,12 @@ import jakarta.validation.constraints.Pattern;
 @Entity
 @Table(name = "tb_student")
 @JsonPropertyOrder({"id", "firstName", "lastname", "registration", "year", "gender", "birthday", "note1", "note2", "average", "status"})
-public class Student extends RepresentationModel<Student>{
+public class Student extends RepresentationModel<Student> {
 
-   // private static final long SerializableUID = 1L;
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @NotBlank(message = "Enter the student's first name")
     private String firstname;
 
@@ -46,7 +42,7 @@ public class Student extends RepresentationModel<Student>{
     @NotBlank(message = "Enter the student's registration")
     private String registration;
 
-    @NotBlank(message = "Enter the gender the students gender")
+    @NotBlank(message = "Enter the student's gender")
     @Pattern(regexp = "^(male|female)$", message = "Gender must be either 'male' or 'female'")
     private String gender;
 
@@ -60,148 +56,117 @@ public class Student extends RepresentationModel<Student>{
 
     @Min(0)
     @Max(10)
-    private double note1 , note2;
+    private double note1, note2;
 
     @ReadOnlyProperty
     private double average;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "students")
-    @JsonIgnoreProperties("students")
-    private List<StudentList> studentList;
+    @ManyToOne
+    @JoinColumn(name = "studentList_id")
+    private StudentList studentList;
 
+    public Student() {
+        // Construtor vazio
+    }
 
-    public Student(){}
-
-  
 
     public Long getId() {
         return id;
     }
 
-
-
     public void setId(Long id) {
         this.id = id;
     }
-
-
 
     public String getFirstname() {
         return firstname;
     }
 
-
-
     public void setFirstname(String firstname) {
         this.firstname = firstname;
     }
-
-
 
     public String getLastname() {
         return lastname;
     }
 
-
-
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
-
-
 
     public String getRegistration() {
         return registration;
     }
 
-
-
     public void setRegistration(String registration) {
         this.registration = registration;
     }
-
-
 
     public String getGender() {
         return gender;
     }
 
-
-
     public void setGender(String gender) {
         this.gender = gender;
     }
-
-
 
     public LocalDate getBirthDay() {
         return birthDay;
     }
 
-
-
     public void setBirthDay(LocalDate birthDay) {
         this.birthDay = birthDay;
     }
-
-
 
     public StudentStatus getStatus() {
         return status;
     }
 
-
-
     public void setStatus(StudentStatus status) {
         this.status = status;
     }
-
-
 
     public double getNote1() {
         return note1;
     }
 
-
-
     public void setNote1(double note1) {
         this.note1 = note1;
     }
-
-
 
     public double getNote2() {
         return note2;
     }
 
-
-
     public void setNote2(double note2) {
         this.note2 = note2;
     }
-
-
 
     public double getAverage() {
         return average;
     }
 
-
-
     public void setAverage(double average) {
         this.average = average;
+
     }
 
+    public StudentList getStudentList() {
+        return studentList;
+    }
 
-    @SuppressWarnings("null")
+    public void setStudentList(StudentList studentList) {
+        this.studentList = studentList;
+    }
+
     @Override
     public String toString() {
         return "Student [id=" + id + ", firstname=" + firstname + ", lastname=" + lastname + ", registration="
-                + registration + ", gender=" + gender + ", birthDay=" + birthDay + ", status="
-                + status + ", note1=" + note1 + ", note2=" + note2 + ", average=" + average + "]";
+                + registration + ", gender=" + gender + ", birthDay=" + birthDay + ", status=" + status + ", note1="
+                + note1 + ", note2=" + note2 + ", average=" + average + ", studentList=" + studentList + "]";
     }
 
+    
     public StudentStatus resultStudent(double average) {
         if (average > 6) {
             return StudentStatus.APPROVED;
@@ -211,10 +176,5 @@ public class Student extends RepresentationModel<Student>{
             return StudentStatus.DISAPPROVED;
         }
     }
-
-    public void addStudenlist(StudentList studentList) {
-        this.studentList.add(studentList);
-    }
-    
 }
-    
+

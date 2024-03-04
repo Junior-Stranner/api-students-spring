@@ -1,7 +1,9 @@
 package br.com.jujubaprojects.studensapi.Model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -10,14 +12,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_Student_list")
-public class StudentList {
+public class StudentList extends RepresentationModel<StudentList>{
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,15 +26,8 @@ public class StudentList {
 
     private String name;
 
-   // private List<Long> studentIds;
-
-    @ManyToMany(cascade = {CascadeType.ALL})
-    @JoinTable(name = "student_list_student",
-           joinColumns = @JoinColumn(name = "student_list_id"),
-           inverseJoinColumns = @JoinColumn(name = "student_id"))
-    @JsonIgnoreProperties("studentLists")
-    private Set<Student> students = new HashSet<>();
-
+    @OneToMany(mappedBy = "studentList", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Student> students ;
 
     
     public StudentList() {
@@ -42,9 +36,8 @@ public class StudentList {
 
     public StudentList( String name) {
         this.name = name;
-     //   this.studentIds = studentIds;
-    }
-
+        this.students = new ArrayList<>();
+     }
 
 
 
@@ -97,14 +90,14 @@ public class StudentList {
 
 
 
-    public Set<Student> getStudents() {
+    public List<Student> getStudents() {
         return students;
     }
 
 
 
 
-    public void setStudents(Set<Student> students) {
+    public void setStudents(List<Student> students) {
         this.students = students;
     }
 
