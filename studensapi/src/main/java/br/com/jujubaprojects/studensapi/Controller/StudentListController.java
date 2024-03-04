@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.jujubaprojects.studensapi.DTO.StudentListDTO;
 import br.com.jujubaprojects.studensapi.Model.Student;
+import br.com.jujubaprojects.studensapi.Model.StudentList;
 import br.com.jujubaprojects.studensapi.Service.StudentListService;
 import br.com.jujubaprojects.studensapi.Service.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -79,12 +80,11 @@ public class StudentListController {
 
     }
 
-    @PutMapping("/addStudent/{studentListId}/{studentId}")
+
+    @PutMapping("/{studentListId}/addStudent/{studentId}")
     public ResponseEntity<StudentListDTO> addStudentToList(@PathVariable long studentListId, @PathVariable long studentId) {
         StudentListDTO studentListDTO = studentListService.addStudentToList(studentId, studentListId);
         return new ResponseEntity<>(studentListDTO, HttpStatus.OK);
-
-
     }
     
     @GetMapping(value = "/{id}",produces = MediaType.APPLICATION_JSON_VALUE)

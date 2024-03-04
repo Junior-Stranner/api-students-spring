@@ -4,8 +4,10 @@ package br.com.jujubaprojects.studensapi.Service;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import br.com.jujubaprojects.studensapi.Repository.StudentListRepository;
 import br.com.jujubaprojects.studensapi.Repository.StudentRepository;
 import br.com.jujubaprojects.studensapi.exeptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 
 @Service
 public class StudentListService {
@@ -66,7 +69,7 @@ public class StudentListService {
         }
     }
 
-    public StudentListDTO addStudentToList(long studentId, long studentListId) {
+   /* public StudentListDTO addStudentToList(long studentId, long studentListId) {
         // Encontre o estudante e a lista de estudantes pelos seus IDs
         Optional<Student> studentOptional = studentRepository.findById(studentId);
         Optional<StudentList> studentListOptional = studentListRepository.findById(studentListId);
@@ -84,6 +87,34 @@ public class StudentListService {
             throw new EntityNotFoundException("Student or StudentList not found");
         }
     }    
+
+    @Transactional
+    public StudentListDTO addStudentToList(long studentId, long studentListId) {
+        // Encontre o estudante e a lista de estudantes pelos seus IDs
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with ID: " + studentId));
+
+        StudentList studentList = studentListRepository.findById(studentListId)
+                .orElseThrow(() -> new EntityNotFoundException("StudentList not found with ID: " + studentListId));
+        // Adicione o estudante à lista de estudantes
+        studentList.addStudent(student);
+        studentListRepository.save(studentList);
+
+        return new StudentListDTO(studentList); // ou qualquer coisa que você queira retornar
+    }*/
+
+    public StudentListDTO addStudentToList(long studentId, long studentListId) {
+        Set<Student> studentSet = null;
+        StudentList studentList = studentListRepository.findById(studentListId).get();
+        Student student = studentRepository.findById(studentId).get();
+
+        studentSet =  studentList.getStudents();
+        studentSet.add(student);
+        studentList.setStudents(studentSet);
+        StudentList addStudentToList = studentListRepository.save(studentList);
+        return new StudentListDTO(addStudentToList);
+    }
+
 
     @SuppressWarnings("null")
     public StudentListDTO findByIdStudentList(Long id) {
@@ -105,7 +136,6 @@ public void deleteStudentList(Long id){
     StudentList deleteStudentList = this.studentListRepository.findById(id).get();
     this.studentListRepository.delete(deleteStudentList);
    }
-
 
 }
     

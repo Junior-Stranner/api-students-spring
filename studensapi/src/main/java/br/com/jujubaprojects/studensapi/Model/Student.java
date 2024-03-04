@@ -8,6 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
@@ -19,7 +20,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -65,7 +65,8 @@ public class Student extends RepresentationModel<Student>{
     @ReadOnlyProperty
     private double average;
 
-     @ManyToMany(mappedBy = "students")
+    @JsonIgnore
+    @ManyToMany(mappedBy = "students")
     @JsonIgnoreProperties("students")
     private List<StudentList> studentList;
 
@@ -209,6 +210,10 @@ public class Student extends RepresentationModel<Student>{
         } else {
             return StudentStatus.DISAPPROVED;
         }
+    }
+
+    public void addStudenlist(StudentList studentList) {
+        this.studentList.add(studentList);
     }
     
 }

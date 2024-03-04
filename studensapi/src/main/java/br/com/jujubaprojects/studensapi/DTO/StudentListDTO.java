@@ -12,7 +12,6 @@ public class StudentListDTO extends RepresentationModel<StudentListDTO> {
     private String name;
     private List<Long> studentIds;
 
-
     
     public StudentListDTO() {
        
@@ -50,7 +49,7 @@ public class StudentListDTO extends RepresentationModel<StudentListDTO> {
     }
 
     public void setstudentIds(List<Long> studentIds) {
-        studentIds = studentIds;
+        this.studentIds = studentIds;
     }
 
     

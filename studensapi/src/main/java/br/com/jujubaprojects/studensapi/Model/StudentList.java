@@ -1,9 +1,11 @@
 package br.com.jujubaprojects.studensapi.Model;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,13 +25,14 @@ public class StudentList {
 
     private String name;
 
-    @ManyToMany
+   // private List<Long> studentIds;
+
+    @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(name = "student_list_student",
            joinColumns = @JoinColumn(name = "student_list_id"),
            inverseJoinColumns = @JoinColumn(name = "student_id"))
     @JsonIgnoreProperties("studentLists")
-    private List<Student> students;
-
+    private Set<Student> students = new HashSet<>();
 
 
     
@@ -37,12 +40,9 @@ public class StudentList {
     }
 
 
-  
-
-    public StudentList(Long id, String name, List<Student> students) {
-        this.id = id;
+    public StudentList( String name) {
         this.name = name;
-        this.students = students;
+     //   this.studentIds = studentIds;
     }
 
 
@@ -66,8 +66,6 @@ public class StudentList {
     public void setName(String name) {
         this.name = name;
     }
-
-
 
 
     @Override
@@ -99,15 +97,26 @@ public class StudentList {
 
 
 
-    public List<Student> getStudents() {
+    public Set<Student> getStudents() {
         return students;
     }
 
 
 
 
-    public void setStudents(List<Student> students) {
+    public void setStudents(Set<Student> students) {
         this.students = students;
     }
-    
+
+
+    @Override
+    public String toString() {
+        return "StudentList [id=" + id + ", name=" + name + ", students=" + students + "]";
+    }
+
+
+    public void addStudent(Student student) {
+       this.students.add(student);
+   }
+
 }
