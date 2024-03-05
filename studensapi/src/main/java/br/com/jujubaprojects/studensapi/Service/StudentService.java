@@ -98,8 +98,8 @@ public ResponseEntity<Student> create(Student student) {
    @SuppressWarnings("null")
    public Student findByIdStudent(Long id) {
     // Buscar o aluno pelo ID
-    Student existingStudent = this.studentRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("No student found with ID: " + id));
+    Optional<Student> optionalStudent = this.studentRepository.findById(id);
+    Student existingStudent = optionalStudent.orElseThrow(() -> new ResourceNotFoundException("No student found with ID: " + id));
 
     // Buscar a média das notas para o aluno pelo ID
     Double average = this.studentRepository.findAverageNoteByStudentId(id);

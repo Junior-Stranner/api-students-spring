@@ -13,6 +13,7 @@ import br.com.jujubaprojects.studensapi.enums.StudentStatus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -61,7 +62,7 @@ public class Student extends RepresentationModel<Student> {
     @ReadOnlyProperty
     private double average;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "studentList_id")
     private StudentList studentList;
 
